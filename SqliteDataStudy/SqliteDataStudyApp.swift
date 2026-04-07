@@ -15,11 +15,6 @@ struct SqliteDataStudyApp: App {
     init() {
         prepareDependencies { dependencies in
             dependencies.defaultDatabase = .appDatabase()
-            do {
-                try dependencies.seedDatabaseForPreviews()
-            } catch {
-                print(error.localizedDescription)
-            }
         }
     }
     

@@ -17,6 +17,7 @@ extension DatabaseWriter where Self == DatabaseQueue {
         var configuration = Configuration()
         configuration.foreignKeysEnabled = true
         
+        
         configuration.prepareDatabase { db in
             #if DEBUG
             db.trace(options: .profile) {
@@ -47,8 +48,7 @@ extension DependencyValues {
     func seedDatabaseForPreviews() throws {
         try defaultDatabase.write { db in
             try db.seed {
-                Person(id: UUID(), name: "Hardik", notes: "He likes play cricket and programming")
-                Person(id: UUID(), name: "Sanjay", notes: "He likes play football and designing")
+                Person.peoples
             }
         }
     }
