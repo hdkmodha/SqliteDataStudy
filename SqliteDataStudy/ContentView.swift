@@ -10,18 +10,16 @@ import SQLiteData
 
 struct ContentView: View {
     
-    @FetchAll(Person.order(by: \.name)) var peoples: [Person]
-    @Dependency(\.defaultDatabase) var database
-    @State private var person: Person.Draft?
+    @State private var viewModel: PersonViewModel = .init()
     
     var body: some View {
         NavigationStack {
             Group {
-                if peoples.isEmpty {
+                if viewModel.peoples.isEmpty {
                     ContentUnavailableView("No People", image: "person.2")
                 } else {
                     List {
-                        ForEach(peoples, id: \.id) { people in
+                        ForEach(viewModel.peoples, id: \.id) { people in
                             VStack(alignment: .leading) {
                                 Text(people.name)
                                     .font(.headline)
@@ -31,7 +29,7 @@ struct ContentView: View {
                             }
                             .swipeActions(edge: .leading) {
                                 Button {
-                                    person = Person.Draft(people)
+                                    viewModel.person = Person.Draft(people)
                                 } label: {
                                     Label("Edit", systemImage: "pencil")
                                 }
@@ -39,14 +37,7 @@ struct ContentView: View {
                             }
                             .swipeActions(edge: .trailing) {
                                 Button {
-                                    do {
-                                        try database.write { db in
-                                            try Person.delete(people)
-                                                .execute(db)
-                                        }
-                                    } catch let error {
-                                        print(error.localizedDescription)
-                                    }
+                                    viewModel.reduce(.deleteButtonTapped(people))
                                 } label: {
                                     Image(systemName: "trash.fill")
                                         .tint(.red)
@@ -55,21 +46,25 @@ struct ContentView: View {
                         }
                     }
                     .listStyle(.plain)
-                    
-                    
                 }
             }
+            .searchable(text: $viewModel.searchText, prompt: "Enter name or notes")
             .navigationTitle("Persons")
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     Button {
-                        self.person = Person.Draft()
+                       viewModel.person = Person.Draft()
                     } label: {
                         Image(systemName: "plus.circle.fill")
                     }
+                    Button {
+                        viewModel.isAcending.toggle()
+                    } label: {
+                        Image(systemName: viewModel.isAcending ? "arrow.down" : "arrow.up")
+                    }
                 }
             }
-            .sheet(item: $person) { person in
+            .sheet(item: $viewModel.person) { person in
                 AddUpdatePerson(person: person)
                     .presentationDetents([.medium])
             }
