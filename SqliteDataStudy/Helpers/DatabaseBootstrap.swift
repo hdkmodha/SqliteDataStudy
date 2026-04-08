@@ -37,6 +37,7 @@ extension DatabaseWriter where Self == DatabaseQueue {
         
         //MARK: - Migrator
         try! Person.migrate(using: &migrator)
+        try! Car.migrate(using: &migrator)
         
         try! migrator.migrate(database)
         

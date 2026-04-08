@@ -1,14 +1,15 @@
 //
-//  ContentView.swift
+//  PersonListView.swift
 //  SqliteDataStudy
 //
-//  Created by Hardik Modha on 23/03/26.
+//  Created by Hardik Modha on 08/04/26.
 //
 
-import SwiftUI
+import Foundation
 import SQLiteData
+import SwiftUI
 
-struct ContentView: View {
+struct PersonListView: View {
     
     @State private var viewModel: PersonViewModel = .init()
     
@@ -53,7 +54,7 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     Button {
-                       viewModel.person = Person.Draft()
+                        viewModel.person = Person.Draft()
                     } label: {
                         Image(systemName: "plus.circle.fill")
                     }
@@ -70,17 +71,4 @@ struct ContentView: View {
             }
         }
     }
-}
-
-#Preview {
-    let _ = prepareDependencies { dependencies in
-        dependencies.defaultDatabase = .appDatabase()
-        do {
-            try dependencies.seedDatabaseForPreviews()
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    ContentView()
 }
